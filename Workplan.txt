@@ -1,0 +1,14 @@
+Data set of interest: Earthquake Data from Fivethirtyeight https://github.com/Stat184-Fall2024/SEC2_FP_Leona-Pierce_Matt-Collins/settings
+
+Possible research questions:
+
+Deadlines:
+12/6 - Research questions determined (total of 4) 
+12/6 - Create R file and import/tidy/wrangle data 
+12/11 - First research question preliminary work - (1 question each)
+12/11 - Create work in progress presentation
+12/13 - Second research question preliminary work - (1 question each)
+12/15 - Write Intro (Leona) and Conclusion (Matt)
+12/17 - Combine individual parts and check style Guide 
+12/17 - Self and Peer evaluations 
+12/18 - Finalize and submit
