@@ -1,0 +1,50 @@
+---
+title: "Earthquake Research"
+author: "Leona Pierce, Matt Collins"
+code-fold: true
+format: pdf
+---
+
+## Intro
+
+## Set up
+
+The first step before beginning the investigation of the data is to set up our environment with the necessary packages and import the data. This is done in the code block below.
+
+```{r}
+#| label: load-new-packages
+#| include: true
+#| warning: false
+#| echo: true
+
+library(tidyverse)
+earthquake = read.csv("./data/earthquake_data.csv")
+```
+
+To make the data easier to use, it is also important to tidy the data. In this case, the data itself is tidy, but the column names could be shorter and more direct to make it easier to reference them within the code.
+
+```{r}
+#| label: column-rename
+#| include: true
+#| warning: false
+#| echo: true
+
+names(earthquake)[1] <- "general_worry"
+names(earthquake)[2] <- "big_one_worry"
+names(earthquake)[3] <- "big_one_occur"
+names(earthquake)[4] <- "experienced_earthquake"
+names(earthquake)[5] <- "taken_preacautions"
+names(earthquake)[6] <- "san_adreas_familiar"
+names(earthquake)[7] <- "yellowstone_familiar"
+names(earthquake)[8] <- "age"
+names(earthquake)[9] <- "gender"
+names(earthquake)[10] <- "household_income"
+names(earthquake)[11] <- "region"
+
+```
+## Research Questions
+### Question 1
+### Question 2
+### Question 3
+### Question 4
+## Conclusion

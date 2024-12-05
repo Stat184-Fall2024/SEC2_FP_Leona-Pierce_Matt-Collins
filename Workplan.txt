@@ -1,6 +1,11 @@
 Data set of interest: Earthquake Data from Fivethirtyeight https://github.com/Stat184-Fall2024/SEC2_FP_Leona-Pierce_Matt-Collins/settings
 
-Possible research questions:
+Research questions:
+What is the relationship between how familiar someone is with San Adreas Fault Line/Yellowstone Supervolcano and if they are worried about the "Big One" occurring in their lifetime? - Leona
+What is the relationship between a person's age, their household income, and how worried someone is about the "Big One"? - Leona
+
+
+
 
 Deadlines:
 12/6 - Research questions determined (total of 4) 
