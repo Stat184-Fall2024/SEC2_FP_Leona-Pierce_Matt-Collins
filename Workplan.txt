@@ -3,8 +3,8 @@ Data set of interest: Earthquake Data from Fivethirtyeight https://github.com/St
 Research questions:
 What is the relationship between how familiar someone is with San Adreas Fault Line/Yellowstone Supervolcano and if they are worried about the "Big One" occurring in their lifetime? - Leona
 What is the relationship between a person's age, their household income, and how worried someone is about the "Big One"? - Leona
-
-
+Where in the United States are people the most worried/prepared for earthquakes, i.e., what is the relationship between location and worriedness/preparedness? - Matt
+What is the relationship between a person's household income, if they have experienced an earthquake before, and if they have made precautions for future earthquakes? - Matt
 
 
 Deadlines:
