@@ -18,7 +18,10 @@ The first step before beginning the investigation of the data is to set up our e
 #| echo: true
 
 library(tidyverse)
-earthquake = read.csv("./data/earthquake_data.csv")
+library(janitor)
+library(dplyr)
+library(knitr)
+earthquake <- read.csv("./data/earthquake_data.csv")
 ```
 
 To make the data easier to use, it is also important to tidy the data. In this case, the data itself is tidy, but the column names could be shorter and more direct to make it easier to reference them within the code.
@@ -34,17 +37,90 @@ names(earthquake)[2] <- "big_one_worry"
 names(earthquake)[3] <- "big_one_occur"
 names(earthquake)[4] <- "experienced_earthquake"
 names(earthquake)[5] <- "taken_preacautions"
-names(earthquake)[6] <- "san_adreas_familiar"
+names(earthquake)[6] <- "san_andreas_familiar"
 names(earthquake)[7] <- "yellowstone_familiar"
 names(earthquake)[8] <- "age"
 names(earthquake)[9] <- "gender"
 names(earthquake)[10] <- "household_income"
 names(earthquake)[11] <- "region"
 
+earthquake <- earthquake
+
 ```
+
 ## Research Questions
+
+In order to explore this data, we have selected 4 research questions to investigate.
+
 ### Question 1
-### Question 2
+
+### Does Knowledge affect how worried someone is?
+
+Moving beyond how worried Americans are generally about earthquakes, we wanted to look specifically at how Americans feels about the "Big One". One question we had in regard to the "Big One" is how knowledge about both the San Andreas fault line and the Yellowstone supervolcano (which are possible causes of the "Big One") may affect how worried one is. On the one hand, more knowledge may result in a greater understanding of how earthquakes occur and their effects, so there would be less irrational worry. But on the other hand, learning of the existence of these possible causes may heighten one's worry as they becoming more aware of a realistic cause of the "Big One".
+
+To investigate this question, we decided to visualize the data as two way tables containing the proportions of "Yes" and "No" responses to the question "Do you think the "Big One" will occur in your lifetime?" compared to their knowledge of the fault line and super volcano in @san-andreas-worry and @yellowstone-worry respectively.
+
+```{r}
+#| tbl-label: san-andreas-worry
+#| tbl-cap: "Worry of 'Big One' occuring in one's liftime compared to knowledge of the San Andreas fault line"
+
+
+san_andreas_table <- earthquake %>%
+  tabyl(san_andreas_familiar, big_one_occur) %>%
+  adorn_totals(where = c("row", "col") ) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_title(
+  placement = "combined",
+  row_name = "Knowledge level",
+  col_name = "Worry level")
+
+san_andreas_formatNs <- attr(san_andreas_table, "core") %>%
+adorn_totals(where = c("row", "col")) %>%
+mutate(
+across(where(is.numeric), format, big.mark = ",")
+)
+san_andreas_FreqTab <- san_andreas_table %>%
+adorn_ns(position = "front", ns = san_andreas_formatNs)
+
+san_andreas_FreqTab %>% kable(digits = c(0, 0, 2, 2, 2))
+```
+
+```{r}
+#| label: yellowstone-worry
+#| include: true
+#| warning: false
+#| echo: true
+#| tbl-cap: "Worry of 'Big One' occuring in one's liftime compared to knowledge of the Yellowstone supervolcano"
+
+
+yellowstone_table <- earthquake %>%
+  tabyl(yellowstone_familiar, big_one_occur) %>%
+  adorn_totals(where = c("row", "col") ) %>%
+  adorn_percentages(denominator = "all") %>%
+  adorn_pct_formatting(digits = 2) %>%
+  adorn_title(
+  placement = "combined",
+  row_name = "Knowledge level",
+  col_name = "Worry level")
+
+yellowstone_formatNs <- attr(yellowstone_table, "core") %>%
+adorn_totals(where = c("row", "col")) %>%
+mutate(
+across(where(is.numeric), format, big.mark = ",")
+)
+yellowstone_FreqTab <- yellowstone_table %>%
+adorn_ns(position = "front", ns = yellowstone_formatNs)
+
+yellowstone_FreqTab %>% kable(digits = c(0, 0, 2, 2, 2))
+```
+
+Based on both tables, in most cases, more people believe that the "Big One" is not going to occur in their life time. However, the one exception is that when someone is extremely familiar with either the San Andreas fault line or the Yellowstone supervolcano, they are more likely than not to believe that the "Big One" will be in their lifetime.
+
+This data supports the claim that more knowledge is related to more worry, but it in unclear what the underlying nature of the relationship is. We can't clearly say that more knowledge causes more worry because there are several possible other explanations. For example, the relationship could actually be the opposite such that worry causes one to seek out knowledge rather than knowledge causing one to worry.
+
 ### Question 3
+
 ### Question 4
+
 ## Conclusion
