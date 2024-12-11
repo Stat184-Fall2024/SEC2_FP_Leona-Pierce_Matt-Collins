@@ -15,12 +15,13 @@ The first step before beginning the investigation of the data is to set up our e
 #| label: load-new-packages
 #| include: true
 #| warning: false
-#| echo: true
+#| echo: false
 
 library(tidyverse)
 library(janitor)
 library(dplyr)
 library(knitr)
+library(ggplot2)
 earthquake <- read.csv("./data/earthquake_data.csv")
 ```
 
@@ -30,7 +31,7 @@ To make the data easier to use, it is also important to tidy the data. In this c
 #| label: column-rename
 #| include: true
 #| warning: false
-#| echo: true
+#| echo: false
 
 names(earthquake)[1] <- "general_worry"
 names(earthquake)[2] <- "big_one_worry"
@@ -52,17 +53,19 @@ earthquake <- earthquake
 
 In order to explore this data, we have selected 4 research questions to investigate.
 
-### Question 1
+### How does worry differ across the United States?
 
 ### Does Knowledge affect how worried someone is?
 
 Moving beyond how worried Americans are generally about earthquakes, we wanted to look specifically at how Americans feels about the "Big One". One question we had in regard to the "Big One" is how knowledge about both the San Andreas fault line and the Yellowstone supervolcano (which are possible causes of the "Big One") may affect how worried one is. On the one hand, more knowledge may result in a greater understanding of how earthquakes occur and their effects, so there would be less irrational worry. But on the other hand, learning of the existence of these possible causes may heighten one's worry as they becoming more aware of a realistic cause of the "Big One".
 
-To investigate this question, we decided to visualize the data as two way tables containing the proportions of "Yes" and "No" responses to the question "Do you think the "Big One" will occur in your lifetime?" compared to their knowledge of the fault line and super volcano in @san-andreas-worry and @yellowstone-worry respectively.
+To investigate this question, we decided to visualize the data as two way tables containing the proportions of "Yes" and "No" responses to the question "Do you think the "Big One" will occur in your lifetime?" compared to their knowledge of the fault line and super volcano in @tbl-san-andreas-worry and @tbl-yellowstone-worry respectively.
 
 ```{r}
-#| tbl-label: san-andreas-worry
+#| label: tbl-san-andreas-worry
 #| tbl-cap: "Worry of 'Big One' occuring in one's liftime compared to knowledge of the San Andreas fault line"
+#| warning: false
+#| echo: false
 
 
 san_andreas_table <- earthquake %>%
@@ -87,10 +90,10 @@ san_andreas_FreqTab %>% kable(digits = c(0, 0, 2, 2, 2))
 ```
 
 ```{r}
-#| label: yellowstone-worry
+#| label: tbl-yellowstone-worry
 #| include: true
 #| warning: false
-#| echo: true
+#| echo: false
 #| tbl-cap: "Worry of 'Big One' occuring in one's liftime compared to knowledge of the Yellowstone supervolcano"
 
 
@@ -119,8 +122,95 @@ Based on both tables, in most cases, more people believe that the "Big One" is n
 
 This data supports the claim that more knowledge is related to more worry, but it in unclear what the underlying nature of the relationship is. We can't clearly say that more knowledge causes more worry because there are several possible other explanations. For example, the relationship could actually be the opposite such that worry causes one to seek out knowledge rather than knowledge causing one to worry.
 
-### Question 3
+### Does age and income relate to one's worry?
 
-### Question 4
+In the previous section, we looked at if there are patterns between one's knowledge about fault lines and super volcanoes and their worry about the "Big One". In this section we will look at another set of variables that could have a pattern in relation to worry. To be specific, we will be looking at age and income.
+
+```{r}
+#| label: fig-age-worry
+#| include: true
+#| warning: false
+#| echo: false
+#| fig-cap: Proportions of worry level across ages.
+
+age_worry_proportion <- earthquake %>%
+  group_by(age, big_one_worry) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))
+
+worry_order <- c("Extremely worried",
+                 "Very worried",
+                 "Somewhat worried",
+                 "Not so worried",
+                 "Not at all worried")
+
+age_worry_proportion$big_one_worry <- factor(age_worry_proportion$big_one_worry, levels = worry_order)
+
+ggplot(age_worry_proportion, aes(x = age, y = proportion, fill = big_one_worry)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Age", 
+       y = "Proportion of Worry Levels",
+       fill = "Worry Levels",
+       title = "Proportions of worry level across ages.") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+In @fig-age-worry, there are a few patterns of interest. The first is that the proportion of people who are "Not at all worried" does not appear to change very much with age and stays relatively consistent. This suggests that age is not a factor in one having very low worry levels about the "Big One".
+
+The second pattern is that the proportion of people that are "Extremely worried" decreases as age increase while the proportion of people that are "Not so worried" increases as age increases. This in some ways makes sense because in order for proportionally less people to have one level of worry, there needs to be proportionally more people to have other levels of worry to account for this change.
+
+Another interesting thing of note in regards to the second pattern is that the "Very worried" and "Somewhat worried" are approximately the same proportion across all age groups. This is likely the result of one of two changes. The first is that the decrease in "Extremely" and increase in "Not so" is a direct shift from the first to the second. The second explanation is that there us a shift where many people decrease their worry across "Extremely", "Very", "Somewhat" and "Not so", but the proportions of these changes were equivalent such that as a net change it merely appears as a decrease in "Extremely" and an increase in "Not so". In order to more accurately determine this, we would need to conduct this survey multiple times across the same group of people to see how indiviudal answers change with age.
+```{r}
+#| label: fig-income-worry
+#| include: true
+#| warning: false
+#| echo: false
+#| fig-cap: Proportions of worry level across income levels.
+
+income_worry_proportion <- earthquake %>%
+  group_by(household_income, big_one_worry) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))
+
+worry_order <- c("Extremely worried",
+                 "Very worried",
+                 "Somewhat worried",
+                 "Not so worried",
+                 "Not at all worried")
+
+income_worry_proportion$big_one_worry <- factor(income_worry_proportion$big_one_worry, levels = worry_order)
+
+x_order <- c("$0 to $9,999",
+             "$10,000 to $24,999",
+             "$25,000 to $49,999",
+             "$50,000 to $74,999",
+             "$75,000 to $99,999",
+             "$100,000 to $124,999",
+             "$125,000 to $149,999",
+             "$150,000 to $174,999",
+             "$175,000 to $199,999",
+             "$200,000 and up",
+             "Prefer not to answer",
+             "")
+
+income_worry_proportion$household_income <- factor(income_worry_proportion$household_income, levels = x_order)
+
+ggplot(income_worry_proportion, aes(x = household_income, y = proportion, fill = big_one_worry)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Household Income", 
+       y = "Proportion of Worry Levels",
+       fill = "Worry Levels",
+       title = "Proportions of worry level across income levels.") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+As compared to @fig-age-worry, the patterns in @fig-income-worry are less apparent. One initial pattern that can be identified is that there seems to be an overall decrease in worry as income increases, but the $200,000 and up income range does not follow this trend. However, this could be the result of outliers due to the fact that this income bracket is uncapped.
+
+Beyond this initial trend, any other conclusions would likely require greater information and more data gathering; however, another possible route for further investigation would be an analysis of how these same demographic attributes affect another element of worriedness about earthquakes. Specifically, we will look at the effects on preparations and precautions in regards to earthquakes.
+
+### Who is prepping for earthquakes?
 
 ## Conclusion
+
+```{r codeAppend, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
