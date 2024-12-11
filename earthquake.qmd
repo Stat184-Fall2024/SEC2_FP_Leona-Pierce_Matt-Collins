@@ -69,7 +69,13 @@ earthquake <- earthquake
 
 In order to explore this data, we have selected 4 research questions to investigate.
 
-@sec-q1
+Our first question is "How does worry differ across the United States?". We selected this question because we believe that location will affect worry since in certain areas of the US, such as the West Coast, earthquakes are more common and thus worry may be higher do to the greater knowledge of the effects of earthquakes.
+
+Our second question is "Does knowledge about possible causes of the "Big One" affect how worried someone is?". We believe that this question could give insight into possible sources of worry, or the mitigation of it, to investigate further. If we do notice a pattern, then more research in regards to the knowledge about these possible causes would be warranted.
+
+Our third question is "What is the relationship between a person's age, their household income, and how worried someone is about the 'Big One'?". We selected this questions to further investigate possible factors in levels of worry. Age and income are two common ways to subdivide the population along possible impact differences since factors can affect one's perspectives and thoughts about the world.
+
+Our final question is "What is the relationship between a person's household income, if they have experienced an earthquake before, and if they have made precautions for future earthquakes?". In the first question, we looked at how region affects how much preparation one does, and we decided to do further investigation along two other possible factors in preparedness. Income affects one's capability of preparing and experience of earthquakes affects one's perception of earthquakes, so these could both be strong factors.
 
 ### How does worry differ across the United States? {#sec-q1}
 
@@ -325,7 +331,7 @@ Just like the graphs displaying the level of worry, these graphs show that the W
 
 The following visualizations have allowed us to answer where in the US people are most worried and prepared for earthquakes, the answer being the Western part of the United States where earthquakes occur more often.
 
-### Does Knowledge affect how worried someone is?
+### Does knowledge about possible causes of the "Big One" affect how worried someone is?
 
 Moving beyond how worried and prepared Americans are generally about earthquakes, we wanted to look specifically at how Americans feels about the "Big One". One question we had in regard to the "Big One" is how knowledge about both the San Andreas fault line and the Yellowstone supervolcano (which are possible causes of the "Big One") may affect how worried one is. On the one hand, more knowledge may result in a greater understanding of how earthquakes occur and their effects, so there would be less irrational worry. But on the other hand, learning of the existence of these possible causes may heighten one's worry as they becoming more aware of a realistic cause of the "Big One".
 
