@@ -5,11 +5,79 @@ code-fold: true
 format: pdf
 ---
 
+```{r}
+#| label: load-new-packages
+#| include: true
+#| warning: false
+#| echo: false
+
+library(tidyverse)
+library(janitor)
+library(dplyr)
+library(knitr)
+library(ggplot2)
+library(usmap)
+```
+
 ## Intro
+
+*San Andreas* is a 2015 action/thriller movie featuring Dwayne "The Rock" Johnson, who, along with his fellow costars, must survive the aftermath of the "Big One", which is a massive earthquake that has hit California (<https://www.imdb.com/title/tt2126355/?ref_=ttfc_ql>).
+
+*San Andreas*, although not the focus of our investigation, was the motivation for the creation of our data set by FiveThirtyEight. A few days before the release of the movie, FiveThirtyEight asked 1013 Americans a series of questions relating to their knowledge and worry about the "Big One" (<https://fivethirtyeight.com/features/the-rock-isnt-alone-lots-of-people-are-worried-about-the-big-one/>).
+
+### Context about earthquakes
+
+Before moving forwards, it is important to define what the "Big One" refers to. Usually, when someone refers to the "Big One", they are referencing the theoretical earthquake of a magnitude between 8-9.2 that would originate from the Cascadia subduction zone which is a 700 mile fault line off the coast of the Pacific Northwest. The likely damage of this earthquake would cover "some hundred and forty thousand square miles ... and some seven million people", or put another way, according to a director at FEMA, "everything west of Interstate 5 will be toast". This would be the second worst natural disaster in the history of North America behind the 2010 Haiti earthquake (<https://www.newyorker.com/magazine/2015/07/20/the-really-big-one>).
+
+Although the "Big One" can be very concerning, earthquakes in general are actually quite common. For example, based on USGS data (<https://www.kaggle.com/datasets/farazrahman/earthquake>), in just the past month, there has been 9400 earthquakes in the US according to @tbl-monthly-count .
+
+```{r}
+#| label: tbl-monthly-count
+#| tbl-cap: "Count of earthquakes in US from 11/11 to 12/11"
+#| warning: false
+#| echo: false
+
+earthquake_monthly <- read.csv("./data/earthquake_monthly.csv")
+
+monthly_count <- earthquake_monthly %>%
+  summarise(
+    count = n(),
+    daily_count = n()/30
+  )
+
+monthly_count %>%
+  kable(
+    digits = 2  # Round to 2 decimal places
+  )
+```
+
+However, despite this seemingly large number of earthquakes, the earthquakes themselves actually aren't very large. Looking into this data further, the summary statistics in @tbl-monthly-summary show that the mean magnitude is only 1.5 on the Richter scale. Furthermore, 75% of the earthquakes are a 2 or less on the Richter scale. These numbers become even more compelling when we consider that the Richter scale is logarithmic, so a magnitude of 2 is much much less than the theoretical magnitudes of 8 or 9 that the "Big One" would have.
+
+```{r}
+#| label: tbl-monthly-summary
+#| tbl-cap: "Summary statistics of earthquake magnitude in US from 11/11 to 12/11"
+#| warning: false
+#| echo: false
+
+monthly_summary <- earthquake_monthly %>%
+  summarise(
+    mean = mean(mag, na.rm = TRUE),
+    median = median(mag, na.rm = TRUE),
+    standard_deviation = sd(mag, na.rm = TRUE),
+    Q1 = quantile(mag, 0.25, na.rm = TRUE),
+    Q3 = quantile(mag, 0.75, na.rm = TRUE),
+    max = max(mag, na.rm = TRUE)
+  )
+
+monthly_summary %>%
+  kable(
+    digits = 2  # Round to 2 decimal places
+  )
+```
 
 ## Set up
 
-In order to most successfully answer our research questions below, we must first set up our environment with the appropriate packages and then import and prepare the data for analysis.
+Despite the fact that the "Big One" would be an outlier in size, it is still very possible, so it is worthwhile to look at people's views and experiences with the "Big One". However, in order to most successfully answer our research questions below, we must first set up our environment with the appropriate packages and then import and prepare the data for analysis.
 
 First, as far as packages, we will be using the following:
 
@@ -25,21 +93,9 @@ First, as far as packages, we will be using the following:
 
 -   usmap - This package allows use to overlay our data on a map to convey how it varies across location
 
-```{r}
-#| label: load-new-packages
-#| include: true
-#| warning: false
-#| echo: false
-
-library(tidyverse)
-library(janitor)
-library(dplyr)
-library(knitr)
-library(ggplot2)
-library(usmap)
-```
-
 The second step of preparation was to import and set up the data for analysis. Fortunately, our data was already tidied, so we did not need to do any additional work for that aspect of our data. However, one problem that we did encounter was that the original column names were the full questions. This makes the columns very unwieldy to work with, so we decided to rename the columns to names that are shorter but still convey the main idea of the given questions.
+
+When talking about our data, it is also important to consider the FAIR and CARE principles. FINISH THIS PARAGRAPH.
 
 ```{r}
 #| label: column-rename
@@ -245,9 +301,10 @@ plot_usmap(data = state_worry %>% filter(general_worry == "Not so worried"),
     )
   )
 
-plot_usmap(data = state_worry %>% filter(general_worry == "Not at all worried"),
-           values = "region_percentage",
-           theme = theme_bw()) +
+plot_usmap(data = state_worry %>% 
+          filter(general_worry == "Not at all worried"),
+          values = "region_percentage",
+          theme = theme_bw()) +
   scale_fill_gradient(
     high = '#8c1e0b',
     low = '#e0aca3'
@@ -335,7 +392,7 @@ The following visualizations have allowed us to answer where in the US people ar
 
 Moving beyond how worried and prepared Americans are generally about earthquakes, we wanted to look specifically at how Americans feels about the "Big One". One question we had in regard to the "Big One" is how knowledge about both the San Andreas fault line and the Yellowstone supervolcano (which are possible causes of the "Big One") may affect how worried one is. On the one hand, more knowledge may result in a greater understanding of how earthquakes occur and their effects, so there would be less irrational worry. But on the other hand, learning of the existence of these possible causes may heighten one's worry as they becoming more aware of a realistic cause of the "Big One".
 
-To investigate this question, we decided to visualize the data as two way tables containing the proportions of "Yes" and "No" responses to the question "Do you think the "Big One" will occur in your lifetime?" compared to their knowledge of the fault line and super volcano in @tbl-san-andreas-worry and @tbl-yellowstone-worry respectively.
+The original article that this data came from, does mention this analysis in passing, but we wanted to dive deeper and actually look at the full breakdown of the data. To investigate this question, we decided to visualize the data as two way tables containing the proportions of "Yes" and "No" responses to the question "Do you think the "Big One" will occur in your lifetime?" compared to their knowledge of the fault line and super volcano in @tbl-san-andreas-worry and @tbl-yellowstone-worry respectively.
 
 ```{r}
 #| label: tbl-san-andreas-worry
@@ -421,9 +478,13 @@ worry_order <- c("Extremely worried",
                  "Not so worried",
                  "Not at all worried")
 
-age_worry_proportion$big_one_worry <- factor(age_worry_proportion$big_one_worry, levels = worry_order)
+age_worry_proportion$big_one_worry <- factor(
+      age_worry_proportion$big_one_worry, 
+      levels = worry_order)
 
-ggplot(age_worry_proportion, aes(x = age, y = proportion, fill = big_one_worry)) +
+ggplot(age_worry_proportion, aes(x = age, 
+                                 y = proportion, 
+                                 fill = big_one_worry)) +
   geom_bar(stat = "identity", position = "stack") +
   labs(x = "Age", 
        y = "Proportion of Worry Levels",
@@ -437,7 +498,7 @@ In @fig-age-worry, there are a few patterns of interest. The first is that the p
 
 The second pattern is that the proportion of people that are "Extremely worried" decreases as age increase while the proportion of people that are "Not so worried" increases as age increases. This in some ways makes sense because in order for proportionally less people to have one level of worry, there needs to be proportionally more people to have other levels of worry to account for this change.
 
-Another interesting thing of note in regards to the second pattern is that the "Very worried" and "Somewhat worried" are approximately the same proportion across all age groups. This is likely the result of one of two changes. The first is that the decrease in "Extremely" and increase in "Not so" is a direct shift from the first to the second. The second explanation is that there us a shift where many people decrease their worry across "Extremely", "Very", "Somewhat" and "Not so", but the proportions of these changes were equivalent such that as a net change it merely appears as a decrease in "Extremely" and an increase in "Not so". In order to more accurately determine this, we would need to conduct this survey multiple times across the same group of people to see how indiviudal answers change with age.
+Another interesting thing of note in regards to the second pattern is that the "Very worried" and "Somewhat worried" are approximately the same proportion across all age groups. This is likely the result of one of two changes. The first is that the decrease in "Extremely" and increase in "Not so" is a direct shift from the first to the second. The second explanation is that there us a shift where many people decrease their worry across "Extremely", "Very", "Somewhat" and "Not so", but the proportions of these changes were equivalent such that as a net change it merely appears as a decrease in "Extremely" and an increase in "Not so". In order to more accurately determine this, we would need to conduct this survey multiple times across the same group of people to see how individual answers change with age.
 
 ```{r}
 #| label: fig-income-worry
@@ -457,7 +518,9 @@ worry_order <- c("Extremely worried",
                  "Not so worried",
                  "Not at all worried")
 
-income_worry_proportion$big_one_worry <- factor(income_worry_proportion$big_one_worry, levels = worry_order)
+income_worry_proportion$big_one_worry <- factor(
+  income_worry_proportion$big_one_worry, 
+  levels = worry_order)
 
 x_order <- c("$0 to $9,999",
              "$10,000 to $24,999",
@@ -472,9 +535,13 @@ x_order <- c("$0 to $9,999",
              "Prefer not to answer",
              "")
 
-income_worry_proportion$household_income <- factor(income_worry_proportion$household_income, levels = x_order)
+income_worry_proportion$household_income <- factor(
+  income_worry_proportion$household_income, 
+  levels = x_order)
 
-ggplot(income_worry_proportion, aes(x = household_income, y = proportion, fill = big_one_worry)) +
+ggplot(income_worry_proportion, aes(x = household_income, 
+                                    y = proportion, 
+                                    fill = big_one_worry)) +
   geom_bar(stat = "identity", position = "stack") +
   labs(x = "Household Income", 
        y = "Proportion of Worry Levels",
