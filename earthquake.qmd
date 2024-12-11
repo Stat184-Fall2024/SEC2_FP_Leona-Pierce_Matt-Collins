@@ -55,6 +55,261 @@ In order to explore this data, we have selected 4 research questions to investig
 
 ### How does worry differ across the United States?
 
+The first question we want to answer is where in the United States are people most worried about earthquakes and where in the United States are people most prepared for earthquakes? This question can be reinterpreted as the relationship between region and worriedness or preparedness.
+
+First, let's look at where most of the responses in this data are coming from by creating a table showing the response counts of each region and the corresponding percentage of the whole.
+
+```{r}
+#| echo: false
+region_counts <- earthquake %>% count(region) %>%
+  mutate(Percentage = round(n / sum(n), 2)) %>%
+  rename(Region = region, Count = n)
+region_counts %>% kable
+```
+
+The table shows that the responses are mostly spread out across the whole of the United States, although there are noticeably the fewest responses in the East South Central region. The blank row at the top of the table shows responses that did not give a region, which will be ignored in our analysis.
+
+An important thing to define before we continue with our analysis is what states are contained in each region. To show maps of the US in this analysis, I will use the "usmap" package. This first map will give each region (or state in that region) a different color, and I am using the US Census Bureau's definition of the states in each region.
+
+```{r}
+#| echo: false
+state_to_region <- list(
+  "East North Central" = c("IL", "IN", "OH", "MI", "WI"),
+  "East South Central" = c("KY", "TN", "MS", "AL"),
+  "Middle Atlantic" = c("NY", "PA", "NJ"),
+  "Mountain" = c("MT", "ID", "WY", "CO", "NM", "UT", "AZ", "NV"),
+  "New England" = c("ME", "VT", "NH", "MA", "CT", "RI"),
+  "Pacific" = c("CA", "OR", "WA", "HI", "AK"),
+  "South Atlantic" = c("WV", "MD", "DE", "VA", "NC", "SC", "GA", "FL"),
+  "West North Central" = c("ND", "SD", "MN", "IA", "MO", "NE", "KS"),
+  "West South Central" = c("AR", "TX", "OK", "LA")
+)
+
+state_region_df <- enframe(state_to_region, name = "Region", value = "state") %>% unnest(state)
+
+state_counts <- state_region_df %>%
+  left_join(region_counts, by = "Region")
+```
+
+```{r}
+#| echo: false
+#| warning: false
+library(usmap)
+
+plot_usmap(data = state_counts,
+           values = "Region",
+           theme = theme_bw())
+```
+
+Now, let's recreate the table of regions and their respective count of responses in map form. An important thing to note about the maps in this analysis is that since we were not given an exact US state for the response, all states in a region will have identical counts or percentages.
+
+```{r}
+#| echo: false
+plot_usmap(data = state_counts,
+           values = "Percentage",
+           theme = theme_bw()) +
+  scale_fill_gradient(
+    labels = scales::label_number(big.mark = ','),
+    breaks = c(0.05, 0.10, 0.15, 0.20),
+    high = '#8c1e0b',
+    low = '#e0aca3'
+  ) +
+  theme(
+    text = element_text(size = 10),
+    legend.position = 'top'
+  ) +
+  labs(fill = 'Percentage of Responses') +
+  guides(
+    fill = guide_colorbar(
+      barwidth = unit(8, 'cm')
+    )
+  )
+```
+
+Now I will move into answering the first part of our research question: where in the US are people most worried about earthquakes? This will be accomplished using the "general_worry" column in our dataset. First, I will create a table where each row is a combination of US state and level of worry (of 5 possible choices).
+
+```{r}
+#| echo: false
+#| warning: false
+
+region_worry <- earthquake %>% count(region, general_worry) %>%
+  mutate(total_percentage = round(n / sum(n), 2)) %>%
+  group_by(region) %>%
+  mutate(region_count = sum(n), 
+         region_percentage = round(n / region_count, 2)) %>%
+  rename(Region = region, count = n)
+
+state_worry <- state_region_df %>%
+  left_join(region_worry, by = "Region")
+
+head(state_worry)
+```
+
+Then, we can plug this table into the same process for our response count map and get 5 new maps showing the percentage of different levels of worry, with one map for each level of worry.
+
+```{r}
+#| echo: false
+
+plot_usmap(data = state_worry %>% filter(general_worry == "Extremely worried"),
+           values = "region_percentage",
+           theme = theme_bw()) +
+  scale_fill_gradient(
+    high = '#8c1e0b',
+    low = '#e0aca3'
+  ) +
+  theme(
+    text = element_text(size = 10),
+    legend.position = 'top'
+  ) +
+  labs(fill = 'Extremely Worried Percentage') +
+  guides(
+    fill = guide_colorbar(
+      barwidth = unit(8, 'cm')
+    )
+  )
+
+plot_usmap(data = state_worry %>% filter(general_worry == "Very worried"),
+           values = "region_percentage",
+           theme = theme_bw()) +
+  scale_fill_gradient(
+    high = '#8c1e0b',
+    low = '#e0aca3'
+  ) +
+  theme(
+    text = element_text(size = 10),
+    legend.position = 'top'
+  ) +
+  labs(fill = 'Very Worried Percentage') +
+  guides(
+    fill = guide_colorbar(
+      barwidth = unit(8, 'cm')
+    )
+  )
+
+plot_usmap(data = state_worry %>% filter(general_worry == "Somewhat worried"),
+           values = "region_percentage",
+           theme = theme_bw()) +
+  scale_fill_gradient(
+    high = '#8c1e0b',
+    low = '#e0aca3'
+  ) +
+  theme(
+    text = element_text(size = 10),
+    legend.position = 'top'
+  ) +
+  labs(fill = 'Somewhat Worried Percentage') +
+  guides(
+    fill = guide_colorbar(
+      barwidth = unit(8, 'cm')
+    )
+  )
+
+plot_usmap(data = state_worry %>% filter(general_worry == "Not so worried"),
+           values = "region_percentage",
+           theme = theme_bw()) +
+  scale_fill_gradient(
+    high = '#8c1e0b',
+    low = '#e0aca3'
+  ) +
+  theme(
+    text = element_text(size = 10),
+    legend.position = 'top'
+  ) +
+  labs(fill = 'Not So Worried Percentage') +
+  guides(
+    fill = guide_colorbar(
+      barwidth = unit(8, 'cm')
+    )
+  )
+
+plot_usmap(data = state_worry %>% filter(general_worry == "Not at all worried"),
+           values = "region_percentage",
+           theme = theme_bw()) +
+  scale_fill_gradient(
+    high = '#8c1e0b',
+    low = '#e0aca3'
+  ) +
+  theme(
+    text = element_text(size = 10),
+    legend.position = 'top'
+  ) +
+  labs(fill = 'Not At All Worried Percentage') +
+  guides(
+    fill = guide_colorbar(
+      barwidth = unit(8, 'cm')
+    )
+  )
+```
+
+As we might have expected, the states/regions that are most worried about earthquakes are the western ones, particularly the Pacific and Mountain regions, where earthquakes are the most common. It is important to pay attention to the scale at the top of these maps because although the Mountain region is a darker shade of red for the "Extremely Worried" graph than it is for the "Somewhat Worried" graph, the scales show that a higher percentage of responses are "Somewhat Worried". Another side note is that the East South Central region is gray in the "Very Worried" graph because that region had no responses with that level of worry. From these maps, we can conclude that the western portion of the United States is generally more worried about earthquakes.
+
+Now, we will follow this exact same process for determining where in the US people are most likely to have prepared for earthquakes, using the "taken_precautions" column. Below is the table that we will use to create the maps.
+
+```{r}
+#| echo: false
+#| warning: false
+
+region_precautions <- earthquake %>% count(region, taken_preacautions) %>%
+  mutate(total_percentage = round(n / sum(n), 2)) %>%
+  group_by(region) %>%
+  mutate(region_count = sum(n), 
+         region_percentage = round(n / region_count, 2)) %>%
+  rename(Region = region, count = n)
+
+state_precautions <- state_region_df %>%
+  left_join(region_precautions, by = "Region")
+
+head(state_precautions)
+```
+
+Below are the maps, one for the "Yes" response and one for the "No" response. Because it is a binary response, the colors of the two maps will be inverse of each other.
+
+```{r}
+#| echo: false
+
+plot_usmap(data = state_precautions %>% filter(taken_preacautions == "Yes"),
+           values = "region_percentage",
+           theme = theme_bw()) +
+  scale_fill_gradient(
+    high = '#8c1e0b',
+    low = '#e0aca3'
+  ) +
+  theme(
+    text = element_text(size = 10),
+    legend.position = 'top'
+  ) +
+  labs(fill = '% Who Have Taken Precautions') +
+  guides(
+    fill = guide_colorbar(
+      barwidth = unit(8, 'cm')
+    )
+  )
+
+plot_usmap(data = state_precautions %>% filter(taken_preacautions == "No"),
+           values = "region_percentage",
+           theme = theme_bw()) +
+  scale_fill_gradient(
+    high = '#8c1e0b',
+    low = '#e0aca3'
+  ) +
+  theme(
+    text = element_text(size = 10),
+    legend.position = 'top'
+  ) +
+  labs(fill = '% Who Have Not Taken Precautions') +
+  guides(
+    fill = guide_colorbar(
+      barwidth = unit(8, 'cm')
+    )
+  )
+```
+
+Just like the graphs displaying the level of worry, these graphs show that the Western part of the United States is more likely to have taken precautions for earthquakes. In fact, it almost appears to be a gradient going from west to east. Logically, this tracks because a person is more likely to have taken precautions for earthquakes if earthquakes happen relatively often. In other words, you won't prepare for something extremely unlikely to happen to you.
+
+The following visualizations have allowed us to answer where in the US people are most worried and prepared for earthquakes, the answer being the Western part of the United States where earthquakes occur more often.
+
+### Question 2
+
 ### Does Knowledge affect how worried someone is?
 
 Moving beyond how worried Americans are generally about earthquakes, we wanted to look specifically at how Americans feels about the "Big One". One question we had in regard to the "Big One" is how knowledge about both the San Andreas fault line and the Yellowstone supervolcano (which are possible causes of the "Big One") may affect how worried one is. On the one hand, more knowledge may result in a greater understanding of how earthquakes occur and their effects, so there would be less irrational worry. But on the other hand, learning of the existence of these possible causes may heighten one's worry as they becoming more aware of a realistic cause of the "Big One".
