@@ -9,7 +9,21 @@ format: pdf
 
 ## Set up
 
-The first step before beginning the investigation of the data is to set up our environment with the necessary packages and import the data. This is done in the code block below.
+In order to most successfully answer our research questions below, we must first set up our environment with the appropriate packages and then import and prepare the data for analysis.
+
+First, as far as packages, we will be using the following:
+
+-   tidyverse - This package gives us the tools that we may need for tidying data
+
+-   dplyr - This package allows us to use piping to more efficiently carry out series of functions
+
+-   janitor - This package allows us to easily create frequency tables for our data
+
+-   knitr - This package give us increased customization for our table to make them more visually appealing
+
+-   ggplot2 - This package extends R's plotting capabilities allowing us to create more detailed and visually clear plots
+
+-   usmap - This package allows use to overlay our data on a map to convey how it varies across location
 
 ```{r}
 #| label: load-new-packages
@@ -22,16 +36,18 @@ library(janitor)
 library(dplyr)
 library(knitr)
 library(ggplot2)
-earthquake <- read.csv("./data/earthquake_data.csv")
+library(usmap)
 ```
 
-To make the data easier to use, it is also important to tidy the data. In this case, the data itself is tidy, but the column names could be shorter and more direct to make it easier to reference them within the code.
+The second step of preparation was to import and set up the data for analysis. Fortunately, our data was already tidied, so we did not need to do any additional work for that aspect of our data. However, one problem that we did encounter was that the original column names were the full questions. This makes the columns very unwieldy to work with, so we decided to rename the columns to names that are shorter but still convey the main idea of the given questions.
 
 ```{r}
 #| label: column-rename
 #| include: true
 #| warning: false
 #| echo: false
+
+earthquake <- read.csv("./data/earthquake_data.csv")
 
 names(earthquake)[1] <- "general_worry"
 names(earthquake)[2] <- "big_one_worry"
@@ -53,7 +69,9 @@ earthquake <- earthquake
 
 In order to explore this data, we have selected 4 research questions to investigate.
 
-### How does worry differ across the United States?
+@sec-q1
+
+### How does worry differ across the United States? {#sec-q1}
 
 The first question we want to answer is where in the United States are people most worried about earthquakes and where in the United States are people most prepared for earthquakes? This question can be reinterpreted as the relationship between region and worriedness or preparedness.
 
@@ -94,7 +112,6 @@ state_counts <- state_region_df %>%
 ```{r}
 #| echo: false
 #| warning: false
-library(usmap)
 
 plot_usmap(data = state_counts,
            values = "Region",
@@ -308,11 +325,9 @@ Just like the graphs displaying the level of worry, these graphs show that the W
 
 The following visualizations have allowed us to answer where in the US people are most worried and prepared for earthquakes, the answer being the Western part of the United States where earthquakes occur more often.
 
-### Question 2
-
 ### Does Knowledge affect how worried someone is?
 
-Moving beyond how worried Americans are generally about earthquakes, we wanted to look specifically at how Americans feels about the "Big One". One question we had in regard to the "Big One" is how knowledge about both the San Andreas fault line and the Yellowstone supervolcano (which are possible causes of the "Big One") may affect how worried one is. On the one hand, more knowledge may result in a greater understanding of how earthquakes occur and their effects, so there would be less irrational worry. But on the other hand, learning of the existence of these possible causes may heighten one's worry as they becoming more aware of a realistic cause of the "Big One".
+Moving beyond how worried and prepared Americans are generally about earthquakes, we wanted to look specifically at how Americans feels about the "Big One". One question we had in regard to the "Big One" is how knowledge about both the San Andreas fault line and the Yellowstone supervolcano (which are possible causes of the "Big One") may affect how worried one is. On the one hand, more knowledge may result in a greater understanding of how earthquakes occur and their effects, so there would be less irrational worry. But on the other hand, learning of the existence of these possible causes may heighten one's worry as they becoming more aware of a realistic cause of the "Big One".
 
 To investigate this question, we decided to visualize the data as two way tables containing the proportions of "Yes" and "No" responses to the question "Do you think the "Big One" will occur in your lifetime?" compared to their knowledge of the fault line and super volcano in @tbl-san-andreas-worry and @tbl-yellowstone-worry respectively.
 
@@ -388,6 +403,7 @@ In the previous section, we looked at if there are patterns between one's knowle
 #| echo: false
 #| fig-cap: Proportions of worry level across ages.
 
+
 age_worry_proportion <- earthquake %>%
   group_by(age, big_one_worry) %>%
   summarise(count = n()) %>%
@@ -410,11 +426,13 @@ ggplot(age_worry_proportion, aes(x = age, y = proportion, fill = big_one_worry))
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
+
 In @fig-age-worry, there are a few patterns of interest. The first is that the proportion of people who are "Not at all worried" does not appear to change very much with age and stays relatively consistent. This suggests that age is not a factor in one having very low worry levels about the "Big One".
 
 The second pattern is that the proportion of people that are "Extremely worried" decreases as age increase while the proportion of people that are "Not so worried" increases as age increases. This in some ways makes sense because in order for proportionally less people to have one level of worry, there needs to be proportionally more people to have other levels of worry to account for this change.
 
 Another interesting thing of note in regards to the second pattern is that the "Very worried" and "Somewhat worried" are approximately the same proportion across all age groups. This is likely the result of one of two changes. The first is that the decrease in "Extremely" and increase in "Not so" is a direct shift from the first to the second. The second explanation is that there us a shift where many people decrease their worry across "Extremely", "Very", "Somewhat" and "Not so", but the proportions of these changes were equivalent such that as a net change it merely appears as a decrease in "Extremely" and an increase in "Not so". In order to more accurately determine this, we would need to conduct this survey multiple times across the same group of people to see how indiviudal answers change with age.
+
 ```{r}
 #| label: fig-income-worry
 #| include: true
@@ -459,7 +477,8 @@ ggplot(income_worry_proportion, aes(x = household_income, y = proportion, fill =
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-As compared to @fig-age-worry, the patterns in @fig-income-worry are less apparent. One initial pattern that can be identified is that there seems to be an overall decrease in worry as income increases, but the $200,000 and up income range does not follow this trend. However, this could be the result of outliers due to the fact that this income bracket is uncapped.
+
+As compared to @fig-age-worry, the patterns in @fig-income-worry are less apparent. One initial pattern that can be identified is that there seems to be an overall decrease in worry as income increases, but the \$200,000 and up income range does not follow this trend. However, this could be the result of outliers due to the fact that this income bracket is uncapped.
 
 Beyond this initial trend, any other conclusions would likely require greater information and more data gathering; however, another possible route for further investigation would be an analysis of how these same demographic attributes affect another element of worriedness about earthquakes. Specifically, we will look at the effects on preparations and precautions in regards to earthquakes.
 
