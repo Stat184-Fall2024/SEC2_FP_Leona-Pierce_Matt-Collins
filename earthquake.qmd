@@ -478,7 +478,121 @@ Beyond this initial trend, any other conclusions would likely require greater in
 
 ### Who is prepping for earthquakes?
 
-# Conclusion
+This final question focuses on the relationship between a person's household income, experience with earthquakes, and their tendency to take precautions for future earthquakes. Our hypothesis before completing a graphical analysis is that those who have a higher income will be more likely to prepare for earthquakes because they can afford to take precautions and that those who have experienced an earthquake before will be more likely to take precautions because they know the impact an earthquake can have.
+
+First, let's investigate the individual relationships between income and preparedness as well as experience and preparedness before we combine both independent variables. To do this we can use stacked bar charts with a bar for each income bracket or experience level that are filled with the proportion of those who took precautions for earthquakes. It is important to use proportions so that our insights are not affected by the volume of responses from a particular income bracket or experience level.
+
+```{r}
+#| echo: false
+#| warning: false
+
+income_precaution_prop <- earthquake %>%
+                          group_by(household_income, taken_preacautions) %>%
+                          summarise(count = n()) %>%
+                          mutate(proportion = count / sum(count))
+
+income_precaution_prop$household_income <- factor(
+  income_precaution_prop$household_income, 
+  levels = x_order)
+
+ggplot(income_precaution_prop, aes(x = household_income, 
+                                    y = proportion, 
+                                    fill = taken_preacautions)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Household Income", 
+       y = "Proportion of Taken Precautions",
+       fill = "Taken Precautions",
+       title = "Proportion of taking precautions across income levels.") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+exp_precaution_prop <- earthquake %>%
+                        group_by(experienced_earthquake, taken_preacautions) %>%
+                        summarise(count = n()) %>%
+                        mutate(proportion = count / sum(count))
+
+exp_order <- c("No",
+               "Yes, one or more minor ones",
+               "Yes, one or more major ones")
+
+exp_precaution_prop$experienced_earthquake <- factor(
+  exp_precaution_prop$experienced_earthquake, 
+  levels = exp_order)
+
+ggplot(exp_precaution_prop, aes(x = experienced_earthquake, 
+                                    y = proportion, 
+                                    fill = taken_preacautions)) +
+  geom_bar(stat = "identity", position = "stack") +
+  labs(x = "Experienced Earthquake", 
+       y = "Proportion of Taken Precautions",
+       fill = "Taken Precautions",
+       title = "Proportion of taking precautions across income levels.") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+The first stacked bar chart showing the relationship between income and preparedness displays to us that for the most part, a person's income does not influence their tendency to prepare for earthquakes. Only when a person's household income surpasses \$200,000 is there a noticeable difference in the proportion of people who took precautions for earthquakes. Although this is somewhat surprising, we can see why people, even if they have expendable income to do so, would not prepare for earthquakes if they do not happen often.
+
+The second stacked bar chart showing the relationship between earthquake experience and preparedness is much more insightful than the previous chart. The proportion of people who have taken precautions for earthquakes more than doubles when their experience with earthquakes moves from one or more minor to one or more major earthquakes. We can see the logic behind this fact quite clearly: if a person knows the true impact an earthquake can have, they will be much more likely to prepare for them so as to limit the damage they do.
+
+Now, let's create a grouped bar chart so that we can combine our two independent categorical variables and see how they influence preparedness.
+
+```{r}
+#| echo: false
+#| warning: false
+
+income_exp_precaution_prop <- earthquake %>%
+                          group_by(household_income, experienced_earthquake,
+                          taken_preacautions) %>%
+                          summarise(count = n()) %>%
+                          mutate(proportion = count / sum(count))
+
+income_exp_precaution_prop[income_exp_precaution_prop == ""] <- NA
+
+missing_rows <- data.frame(household_income = c("$100,000 to $124,999", "$125,000 to $149,999", "$175,000 to $199,999", "$175,000 to $199,999"), experienced_earthquake = c("No", "No", "No", "Yes, one or more major ones"), taken_preacautions = c("Yes", "Yes", "Yes", "Yes"), count = c(0, 0, 0, 0), proportion = c(0.00, 0.00, 0.00, 0.00))
+
+income_exp_precaution_props <- na.omit(income_exp_precaution_prop)
+income_exp_precaution_prop_bind <- bind_rows(income_exp_precaution_props, missing_rows)
+
+income_exp_precaution_prop_bind$experienced_earthquake <- factor(
+  income_exp_precaution_prop_bind$experienced_earthquake, 
+  levels = exp_order)
+
+income_exp_precaution_prop_bind$household_income <- factor(
+  income_exp_precaution_prop_bind$household_income, 
+  levels = x_order)
+
+ggplot(income_exp_precaution_prop_bind %>% filter(taken_preacautions == "Yes"), aes(x = household_income, 
+    y = proportion, 
+    fill = experienced_earthquake)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Household Income", 
+       y = "Proportion of Taken Precautions",
+       fill = "Experienced Earthquake",
+       title = "Proportion of taking precautions across income levels and experience with earthquakes.") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+This grouped bar chart shows what was already displayed in the previous two charts, only in a more concise and clean form. Because the income bracket groups do not seem to have an increasing trend as they go from left to right but there is a clear difference between the height of the blue bars and the other bars, we can conclude that a person's income does not influence their preparedness for earthquakes, but their prior experience with earthquakes does.
+
+## Conclusion
+
+Over the course of this report, we have explored and answered various questions about a person's level of general worry about earthquakes, their worry about the "Big One", their preparedness for earthquakes, and about the factors that influence those variables. We conducted our analyses by creating insightful tables and graphs of many types that allow even those not familiar with data analysis to draw the same conclusions that we did.
+
+Our conclusions for the four research questions were that:
+
+1.  As you move closer to the West Coast of the United States, a higher proportion of people are worried about earthquakes and therefore a higher proportion of people are likely to have taken precautions for earthquakes.
+2.  Generally, people do not believe the "Big One" will happen in their lifetime, but if someone is knowledgeable about the San Andreas Fault and the Yellowstone Supervolcano they are much more likely to believe it will happen in their lifetime.
+3.  There is a slight pattern apparent that as you become older and as your household income grows, a person becomes less worried about earthquakes, however, the pattern is not significant enough to state anything as fact.
+4.  While income does not appear to influence a person's tendency to take precautions for earthquakes, experiencing an earthquake, especially a major one, does almost certainly lead to a person being more likely to take precautions.
+
+While we performed no hypothesis testing or statistical inference in our report, which could be completed in future projects with this data set, the conclusions that we made are nonetheless valuable insights and could be extremely helpful to those striving an increased awareness of the damage that earthquakes can do.
 
 \newpage
 
