@@ -19,7 +19,7 @@ library(ggplot2)
 library(usmap)
 ```
 
-## Intro
+# Intro
 
 *San Andreas* is a 2015 action/thriller movie featuring Dwayne "The Rock" Johnson, who, along with his fellow costars, must survive the aftermath of the "Big One", which is a massive earthquake that has hit California (<https://www.imdb.com/title/tt2126355/?ref_=ttfc_ql>).
 
@@ -75,7 +75,7 @@ monthly_summary %>%
   )
 ```
 
-## Set up
+# Set up
 
 Despite the fact that the "Big One" would be an outlier in size, it is still very possible, so it is worthwhile to look at people's views and experiences with the "Big One". However, in order to most successfully answer our research questions below, we must first set up our environment with the appropriate packages and then import and prepare the data for analysis.
 
@@ -94,8 +94,6 @@ First, as far as packages, we will be using the following:
 -   usmap - This package allows use to overlay our data on a map to convey how it varies across location
 
 The second step of preparation was to import and set up the data for analysis. Fortunately, our data was already tidied, so we did not need to do any additional work for that aspect of our data. However, one problem that we did encounter was that the original column names were the full questions. This makes the columns very unwieldy to work with, so we decided to rename the columns to names that are shorter but still convey the main idea of the given questions.
-
-When talking about our data, it is also important to consider the FAIR and CARE principles. FINISH THIS PARAGRAPH.
 
 ```{r}
 #| label: column-rename
@@ -121,7 +119,17 @@ earthquake <- earthquake
 
 ```
 
-## Research Questions
+When talking about our data, it is also important to consider the FAIR principles (Findability, Accessibility, Interoperability, Reusability). Our data's adherence to these principles is as follows:
+
+-   Findability: The data is easily findable as it is contained in both the footer of the original FiveThirtyEight article and the GitHub repository that contains all of FiveThirtyEight's data that they use for articles
+
+-   Accessibility: The data is accessible since the GitHub repository is public
+
+-   Interoperability: Within the data, the column where interoperability is most applicable is the column containing the respondents' regions. This column does not completely adhere to the principle, since the region terms, although common, are not necessarily defined the same by everyone (we have decided to use the US Census Bureau's definition)
+
+-   Reuseability: Within the GitHub repository, along with the data, there is a README file that clearly outlines how the data was created and what it means which allows for reuse.
+
+# Research Questions
 
 In order to explore this data, we have selected 4 research questions to investigate.
 
@@ -470,7 +478,7 @@ Beyond this initial trend, any other conclusions would likely require greater in
 
 ### Who is prepping for earthquakes?
 
-## Conclusion
+# Conclusion
 
 ```{r codeAppend, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
 ```
