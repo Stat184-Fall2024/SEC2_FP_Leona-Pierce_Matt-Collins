@@ -574,7 +574,7 @@ ggplot(income_exp_precaution_prop_bind %>% filter(taken_preacautions == "Yes"), 
   labs(x = "Household Income", 
        y = "Proportion of Taken Precautions",
        fill = "Experienced Earthquake",
-       title = "Proportion of taking precautions across income levels and experience with earthquakes.") +
+       title = "Precautions across income levels and earthquake experience.") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
