@@ -21,15 +21,15 @@ library(usmap)
 
 # Intro
 
-*San Andreas* is a 2015 action/thriller movie featuring Dwayne "The Rock" Johnson, who, along with his fellow costars, must survive the aftermath of the "Big One", which is a massive earthquake that has hit California (<https://www.imdb.com/title/tt2126355/?ref_=ttfc_ql>).
+*San Andreas* is a 2015 action/thriller movie featuring Dwayne "The Rock" Johnson, who, along with his fellow costars, must survive the aftermath of the "Big One", which is a massive earthquake that has hit California (IMDb).
 
-*San Andreas*, although not the focus of our investigation, was the motivation for the creation of our data set by FiveThirtyEight. A few days before the release of the movie, FiveThirtyEight asked 1013 Americans a series of questions relating to their knowledge and worry about the "Big One" (<https://fivethirtyeight.com/features/the-rock-isnt-alone-lots-of-people-are-worried-about-the-big-one/>).
+*San Andreas*, although not the focus of our investigation, was the motivation for the creation of our data set by FiveThirtyEight. A few days before the release of the movie, FiveThirtyEight asked 1013 Americans a series of questions relating to their knowledge and worry about the "Big One" (Hickey).
 
 ### Context about earthquakes
 
-Before moving forwards, it is important to define what the "Big One" refers to. Usually, when someone refers to the "Big One", they are referencing the theoretical earthquake of a magnitude between 8-9.2 that would originate from the Cascadia subduction zone which is a 700 mile fault line off the coast of the Pacific Northwest. The likely damage of this earthquake would cover "some hundred and forty thousand square miles ... and some seven million people", or put another way, according to a director at FEMA, "everything west of Interstate 5 will be toast". This would be the second worst natural disaster in the history of North America behind the 2010 Haiti earthquake (<https://www.newyorker.com/magazine/2015/07/20/the-really-big-one>).
+Before moving forwards, it is important to define what the "Big One" refers to. Usually, when someone refers to the "Big One", they are referencing the theoretical earthquake of a magnitude between 8-9.2 that would originate from the Cascadia subduction zone which is a 700 mile fault line off the coast of the Pacific Northwest. The likely damage of this earthquake would cover "some hundred and forty thousand square miles ... and some seven million people", or put another way, according to a director at FEMA, "everything west of Interstate 5 will be toast". This would be the second worst natural disaster in the history of North America behind the 2010 Haiti earthquake (Schulz).
 
-Although the "Big One" can be very concerning, earthquakes in general are actually quite common. For example, based on USGS data (<https://www.kaggle.com/datasets/farazrahman/earthquake>), in just the past month, there has been 9400 earthquakes in the US according to @tbl-monthly-count .
+Although the "Big One" can be very concerning, earthquakes in general are actually quite common. For example, based on USGS data (US Geological Service), in just the past month, there has been 9400 earthquakes in the US according to @tbl-monthly-count .
 
 ```{r}
 #| label: tbl-monthly-count
@@ -479,6 +479,22 @@ Beyond this initial trend, any other conclusions would likely require greater in
 ### Who is prepping for earthquakes?
 
 # Conclusion
+
+\newpage
+
+# Works Cited
+
+Hickey, Walt. “The Rock Isn’t Alone: Lots of People Are Worried about ‘the Big One.’” *FiveThirtyEight*, FiveThirtyEight, 2 June 2015, fivethirtyeight.com/features/the-rock-isnt-alone-lots-of-people-are-worried-about-the-big-one/.
+
+“San Andreas.” *IMDb*, IMDb.com, 29 May 2015, www.imdb.com/title/tt2126355/?ref\_=ttfc_ql.
+
+Schulz, Kathryn. “The Earthquake That Will Devastate the Pacific Northwest.” *The New Yorker*, 13 July 2015, www.newyorker.com/magazine/2015/07/20/the-really-big-one.
+
+U.S. Geological Survey. “Real-Time Notifications, Feeds, and Web Services.” *U.S. Geological Survey*, 11 Dec. 2024, earthquake.usgs.gov/earthquakes/feed/.
+
+\newpage
+
+# Code Appendix
 
 ```{r codeAppend, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
 ```
