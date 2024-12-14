@@ -3,6 +3,7 @@ title: "Earthquake Research"
 author: "Leona Pierce, Matt Collins"
 code-fold: true
 format: pdf
+# Style Guide - BOAST
 ---
 
 ```{r}
@@ -115,8 +116,6 @@ names(earthquake)[9] <- "gender"
 names(earthquake)[10] <- "household_income"
 names(earthquake)[11] <- "region"
 
-earthquake <- earthquake
-
 ```
 
 When talking about our data, it is also important to consider the FAIR principles (Findability, Accessibility, Interoperability, Reusability). Our data's adherence to these principles is as follows:
@@ -149,9 +148,11 @@ First, let's look at where most of the responses in this data are coming from by
 
 ```{r}
 #| echo: false
-region_counts <- earthquake %>% count(region) %>%
+region_counts <- earthquake %>% 
+  count(region) %>%
   mutate(Percentage = round(n / sum(n), 2)) %>%
   rename(Region = region, Count = n)
+
 region_counts %>% kable
 ```
 
@@ -162,18 +163,61 @@ An important thing to define before we continue with our analysis is what states
 ```{r}
 #| echo: false
 state_to_region <- list(
-  "East North Central" = c("IL", "IN", "OH", "MI", "WI"),
-  "East South Central" = c("KY", "TN", "MS", "AL"),
-  "Middle Atlantic" = c("NY", "PA", "NJ"),
-  "Mountain" = c("MT", "ID", "WY", "CO", "NM", "UT", "AZ", "NV"),
-  "New England" = c("ME", "VT", "NH", "MA", "CT", "RI"),
-  "Pacific" = c("CA", "OR", "WA", "HI", "AK"),
-  "South Atlantic" = c("WV", "MD", "DE", "VA", "NC", "SC", "GA", "FL"),
-  "West North Central" = c("ND", "SD", "MN", "IA", "MO", "NE", "KS"),
-  "West South Central" = c("AR", "TX", "OK", "LA")
+  "East North Central" = c("IL", 
+                           "IN", 
+                           "OH", 
+                           "MI", 
+                           "WI"),
+  "East South Central" = c("KY", 
+                           "TN", 
+                           "MS", 
+                           "AL"),
+  "Middle Atlantic" = c("NY", 
+                        "PA", 
+                        "NJ"),
+  "Mountain" = c("MT", 
+                 "ID", 
+                 "WY", 
+                 "CO", 
+                 "NM", 
+                 "UT", 
+                 "AZ", 
+                 "NV"),
+  "New England" = c("ME", 
+                    "VT", 
+                    "NH", 
+                    "MA", 
+                    "CT", 
+                    "RI"),
+  "Pacific" = c("CA", 
+                "OR", 
+                "WA", 
+                "HI", 
+                "AK"),
+  "South Atlantic" = c("WV", 
+                       "MD", 
+                       "DE", 
+                       "VA", 
+                       "NC", 
+                       "SC", 
+                       "GA", 
+                       "FL"),
+  "West North Central" = c("ND", 
+                           "SD", 
+                           "MN", 
+                           "IA", 
+                           "MO", 
+                           "NE", 
+                           "KS"),
+  "West South Central" = c("AR", 
+                           "TX", 
+                           "OK", 
+                           "LA")
 )
 
-state_region_df <- enframe(state_to_region, name = "Region", value = "state") %>% unnest(state)
+state_region_df <- enframe(state_to_region, 
+                           name = "Region", 
+                           value = "state") %>% unnest(state)
 
 state_counts <- state_region_df %>%
   left_join(region_counts, by = "Region")
@@ -224,8 +268,14 @@ region_worry <- earthquake %>% count(region, general_worry) %>%
   group_by(region) %>%
   mutate(region_count = sum(n), 
          region_percentage = round(n / region_count, 2)) %>%
-  rename(Region = region, count = n) %>%
-  mutate(region_score = ifelse(general_worry == "Extremely worried", region_percentage * 500, ifelse(general_worry == "Very worried", region_percentage * 400, ifelse(general_worry == "Somewhat worried", region_percentage * 300, ifelse(general_worry == "Not so worried", region_percentage * 200, region_percentage * 100)))))
+  rename(Region = region, 
+         count = n) %>%
+  mutate(region_score = ifelse(general_worry == "Extremely worried", 
+         region_percentage * 500, ifelse(general_worry == "Very worried", 
+         region_percentage * 400, ifelse(general_worry == "Somewhat worried", 
+         region_percentage * 300,
+         ifelse(general_worry == "Not so worried", region_percentage * 200, 
+         region_percentage * 100)))))
 
 region_avg_worry <- region_worry %>% group_by(Region) %>%
                     summarize(avg_worry = sum(region_score) / 5)
@@ -333,12 +383,12 @@ san_andreas_table <- earthquake %>%
   col_name = "Worry level")
 
 san_andreas_formatNs <- attr(san_andreas_table, "core") %>%
-adorn_totals(where = c("row", "col")) %>%
-mutate(
-across(where(is.numeric), format, big.mark = ",")
-)
+  adorn_totals(where = c("row", "col")) %>%
+  mutate(
+    across(where(is.numeric), format, big.mark = ",")
+  )
 san_andreas_FreqTab <- san_andreas_table %>%
-adorn_ns(position = "front", ns = san_andreas_formatNs)
+  adorn_ns(position = "front", ns = san_andreas_formatNs)
 
 san_andreas_FreqTab %>% kable(digits = c(0, 0, 2, 2, 2))
 ```
@@ -362,12 +412,12 @@ yellowstone_table <- earthquake %>%
   col_name = "Worry level")
 
 yellowstone_formatNs <- attr(yellowstone_table, "core") %>%
-adorn_totals(where = c("row", "col")) %>%
-mutate(
-across(where(is.numeric), format, big.mark = ",")
-)
+  adorn_totals(where = c("row", "col")) %>%
+  mutate(
+    across(where(is.numeric), format, big.mark = ",")
+  )
 yellowstone_FreqTab <- yellowstone_table %>%
-adorn_ns(position = "front", ns = yellowstone_formatNs)
+  adorn_ns(position = "front", ns = yellowstone_formatNs)
 
 yellowstone_FreqTab %>% kable(digits = c(0, 0, 2, 2, 2))
 ```
@@ -487,17 +537,18 @@ First, let's investigate the individual relationships between income and prepare
 #| warning: false
 
 income_precaution_prop <- earthquake %>%
-                          group_by(household_income, taken_preacautions) %>%
-                          summarise(count = n()) %>%
-                          mutate(proportion = count / sum(count))
+  group_by(household_income, 
+           taken_preacautions) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))
 
 income_precaution_prop$household_income <- factor(
   income_precaution_prop$household_income, 
   levels = x_order)
 
 ggplot(income_precaution_prop, aes(x = household_income, 
-                                    y = proportion, 
-                                    fill = taken_preacautions)) +
+                                   y = proportion, 
+                                   fill = taken_preacautions)) +
   geom_bar(stat = "identity", position = "stack") +
   labs(x = "Household Income", 
        y = "Proportion of Taken Precautions",
@@ -512,7 +563,8 @@ ggplot(income_precaution_prop, aes(x = household_income,
 #| warning: false
 
 exp_precaution_prop <- earthquake %>%
-                        group_by(experienced_earthquake, taken_preacautions) %>%
+                        group_by(experienced_earthquake,
+                                 taken_preacautions) %>%
                         summarise(count = n()) %>%
                         mutate(proportion = count / sum(count))
 
@@ -547,17 +599,33 @@ Now, let's create a grouped bar chart so that we can combine our two independent
 #| warning: false
 
 income_exp_precaution_prop <- earthquake %>%
-                          group_by(household_income, experienced_earthquake,
-                          taken_preacautions) %>%
-                          summarise(count = n()) %>%
-                          mutate(proportion = count / sum(count))
+  group_by(household_income,
+    experienced_earthquake,
+    taken_preacautions) %>%
+  summarise(count = n()) %>%
+  mutate(proportion = count / sum(count))
 
 income_exp_precaution_prop[income_exp_precaution_prop == ""] <- NA
 
-missing_rows <- data.frame(household_income = c("$100,000 to $124,999", "$125,000 to $149,999", "$175,000 to $199,999", "$175,000 to $199,999"), experienced_earthquake = c("No", "No", "No", "Yes, one or more major ones"), taken_preacautions = c("Yes", "Yes", "Yes", "Yes"), count = c(0, 0, 0, 0), proportion = c(0.00, 0.00, 0.00, 0.00))
+missing_rows <- data.frame(
+                  household_income = c("$100,000 to $124,999",
+                                       "$125,000 to $149,999",
+                                       "$175,000 to $199,999",
+                                       "$175,000 to $199,999"),
+                  experienced_earthquake = c("No", 
+                                             "No",
+                                             "No",
+                                             "Yes, one or more major ones"), 
+                  taken_preacautions = c("Yes",
+                                         "Yes",
+                                         "Yes",
+                                         "Yes"),
+                  count = c(0, 0, 0, 0), 
+                  proportion = c(0.00, 0.00, 0.00, 0.00))
 
 income_exp_precaution_props <- na.omit(income_exp_precaution_prop)
-income_exp_precaution_prop_bind <- bind_rows(income_exp_precaution_props, missing_rows)
+income_exp_precaution_prop_bind <- bind_rows(income_exp_precaution_props, 
+          missing_rows)
 
 income_exp_precaution_prop_bind$experienced_earthquake <- factor(
   income_exp_precaution_prop_bind$experienced_earthquake, 
@@ -567,16 +635,19 @@ income_exp_precaution_prop_bind$household_income <- factor(
   income_exp_precaution_prop_bind$household_income, 
   levels = x_order)
 
-ggplot(income_exp_precaution_prop_bind %>% filter(taken_preacautions == "Yes"), aes(x = household_income, 
-    y = proportion, 
-    fill = experienced_earthquake)) +
+ggplot(income_exp_precaution_prop_bind %>%
+  filter(taken_preacautions == "Yes"), 
+  aes(x = household_income, 
+      y = proportion, 
+      fill = experienced_earthquake)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(x = "Household Income", 
        y = "Proportion of Taken Precautions",
        fill = "Experienced Earthquake",
        title = "Precautions across income levels and earthquake experience.") +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, 
+                                   hjust = 1))
 ```
 
 This grouped bar chart shows what was already displayed in the previous two charts, only in a more concise and clean form. Because the income bracket groups do not seem to have an increasing trend as they go from left to right but there is a clear difference between the height of the blue bars and the other bars, we can conclude that a person's income does not influence their preparedness for earthquakes, but their prior experience with earthquakes does.
@@ -597,6 +668,14 @@ While we performed no hypothesis testing or statistical inference in our report,
 \newpage
 
 # Works Cited
+
+       
+\noindent 
+\vspace{-2em} 
+\setlength{\parindent}{-0.5in} 
+\setlength{\leftskip}{0.5in} 
+\setlength{\parskip}{15pt}
+
 
 Hickey, Walt. “The Rock Isn’t Alone: Lots of People Are Worried about ‘the Big One.’” *FiveThirtyEight*, FiveThirtyEight, 2 June 2015, fivethirtyeight.com/features/the-rock-isnt-alone-lots-of-people-are-worried-about-the-big-one/.
 
