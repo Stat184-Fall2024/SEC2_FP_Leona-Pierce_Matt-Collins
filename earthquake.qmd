@@ -148,6 +148,7 @@ First, let's look at where most of the responses in this data are coming from by
 
 ```{r}
 #| echo: false
+#| label: region-count-tbl
 region_counts <- earthquake %>% 
   count(region) %>%
   mutate(Percentage = round(n / sum(n), 2)) %>%
@@ -162,6 +163,7 @@ An important thing to define before we continue with our analysis is what states
 
 ```{r}
 #| echo: false
+#| label: state-to-region
 state_to_region <- list(
   "East North Central" = c("IL", 
                            "IN", 
@@ -226,6 +228,7 @@ state_counts <- state_region_df %>%
 ```{r}
 #| echo: false
 #| warning: false
+#| label: region-map
 
 plot_usmap(data = state_counts,
            values = "Region",
@@ -236,6 +239,7 @@ Now, let's recreate the table of regions and their respective count of responses
 
 ```{r}
 #| echo: false
+#| label: count-map
 plot_usmap(data = state_counts,
            values = "Percentage",
            theme = theme_bw()) +
@@ -262,6 +266,7 @@ Now I will move into answering the first part of our research question: where in
 ```{r}
 #| echo: false
 #| warning: false
+#| label: worry-calculations
 
 region_worry <- earthquake %>% count(region, general_worry) %>%
   mutate(total_percentage = round(n / sum(n), 2)) %>%
@@ -290,6 +295,7 @@ Then, we can plug this table into the same process for our response count map an
 
 ```{r}
 #| echo: false
+#| label: worry-map
 
 plot_usmap(data = state_worry,
            values = "avg_worry",
@@ -317,6 +323,7 @@ Now, we will follow this exact same process for determining where in the US peop
 ```{r}
 #| echo: false
 #| warning: false
+#| label: precaution-calculations
 
 region_precautions <- earthquake %>% count(region, taken_preacautions) %>%
   mutate(total_percentage = round(n / sum(n), 2)) %>%
@@ -335,6 +342,7 @@ Below is the map. Because it is a binary response, we only need a single map to 
 
 ```{r}
 #| echo: false
+#| label: precaution-map
 
 plot_usmap(data = state_precautions %>% filter(taken_preacautions == "Yes"),
            values = "region_percentage",
@@ -535,6 +543,7 @@ First, let's investigate the individual relationships between income and prepare
 ```{r}
 #| echo: false
 #| warning: false
+#| label: income-bar
 
 income_precaution_prop <- earthquake %>%
   group_by(household_income, 
@@ -561,6 +570,7 @@ ggplot(income_precaution_prop, aes(x = household_income,
 ```{r}
 #| echo: false
 #| warning: false
+#| label: precaution-bar
 
 exp_precaution_prop <- earthquake %>%
                         group_by(experienced_earthquake,
@@ -597,6 +607,7 @@ Now, let's create a grouped bar chart so that we can combine our two independent
 ```{r}
 #| echo: false
 #| warning: false
+#| label: income-precaution-bar
 
 income_exp_precaution_prop <- earthquake %>%
   group_by(household_income,
